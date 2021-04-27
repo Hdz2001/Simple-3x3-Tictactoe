@@ -7,5 +7,6 @@
 ## **Problems:**
 
 ## **Screenshot:**
+![image](https://raw.github.com/Hdz2001/Simple-3x3-Tictactoe/main/tictactoe.PNG)
 
 
