@@ -38,8 +38,13 @@ player1_text = font.render('P1: X', True, WHITE)
 player1_text_rect = player1_text.get_rect(center = (0.87*width, height/6))
 player2_text = font.render('P2: O', True, WHITE)
 player2_text_rect = player2_text.get_rect(center = (0.87*width, height/2))
+
 p1_turn_text = font.render('P1 Turn', True, WHITE)
 p2_turn_text = font.render('P2 Turn', True, WHITE)
+
+reset_text = font.render('Reset', True, WHITE)
+reset_rect = reset_text.get_rect(center = (0.8*width, 2/3*height))
+
 result1 = font.render('P1 WINS!', True, WHITE)
 result2 = font.render('P2 WINS!', True, WHITE)
 result3 = font.render('DRAW!', True, WHITE)
@@ -52,9 +57,10 @@ def drawBackGroundAndIcon():
 	screen.blit(icon,(0.64*width,height/12))
 	screen.blit(icon,(0.64*width,5*height/12))
 
-def writePlayer1And2():
-	screen.blit(player1_text,(player1_text_rect))
+def writePlayer1And2AndReset():
+	screen.blit(player1_text,player1_text_rect)
 	screen.blit(player2_text,player2_text_rect)
+	screen.blit(reset_text, reset_rect)
 
 def drawBoard():
 	pygame.draw.line(screen, WHITE, (height,0), (height,height), thickness)
@@ -100,9 +106,23 @@ def playerMove(col,row):
 			p1_turn = True
 		taken[row-1][col-1] = True
 
+def resetButton():
+	global p1_turn
+	global p1_move
+	global p2_move
+	global found_winner
+	global taken
+
+	if (11/15*width<mouseX<13/15*width) and (37/60*height<mouseY<43/60*height):
+		p1_turn = True
+		p1_move = []
+		p2_move = []
+		found_winner = False
+		taken = [[False,False,False],[False,False,False], [False,False,False]]
+	
 while running:
 	drawBackGroundAndIcon();
-	writePlayer1And2();
+	writePlayer1And2AndReset();
 	drawBoard();
 
 	mouseX, mouseY = pygame.mouse.get_pos()
@@ -110,23 +130,28 @@ while running:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			running = False 
-		if event.type == pygame.MOUSEBUTTONDOWN and not found_winner:
+		if event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1: 
-				playerMove(1,1)
-				playerMove(1,2)
-				playerMove(1,3)
-				playerMove(2,1)
-				playerMove(2,2)
-				playerMove(2,3)
-				playerMove(3,1)
-				playerMove(3,2)
-				playerMove(3,3)
+				resetButton()
 
+				if not found_winner:
+					playerMove(1,1)
+					playerMove(1,2)
+					playerMove(1,3)
+					playerMove(2,1)
+					playerMove(2,2)
+					playerMove(2,3)
+					playerMove(3,1)
+					playerMove(3,2)
+					playerMove(3,3)
+
+				# for debugging
 				print(p1_move)
 				print(p2_move)
 				print(taken)
 				print(p1_turn)	
 							
+	# print out winner or draw if there is one 
 	for i in winning_conditions:
 		if all(elem in p1_move for elem in i): 
 			found_winner = True
